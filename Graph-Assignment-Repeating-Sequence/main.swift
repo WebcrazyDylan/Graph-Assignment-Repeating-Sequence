@@ -7,35 +7,40 @@
 
 import Foundation
 
-/// base^exponent
-/// - Parameters:
-///   - base: the base
-///   - exponent: the exponent (assume exponent >= 0)
-/// - Returns: base^exponent
-func power(base: Int, exponent: Int) -> Int {
-  // base case
-  if exponent == 0 { return 1 }
-  // recursive case
-  return base * power(base: base, exponent: exponent - 1)
+func repeatingSequence() {
+    print("Please input for Repeating Sequence")
+    let getInput = readLine()!.split(separator: " ").map { Int($0) }
+    let firstNumber = getInput[0]!
+    let exponent = getInput[1]!
+    var alreadyAppearedNumber: Set = [firstNumber]
+    var sequence: [Int] = [firstNumber]
+    
+    var currentNumber: Int = firstNumber
+    var nextNumber: Int = 0
+    var notLoopYet: Bool = true
+    var count = 0
+    while(notLoopYet) {
+        while(currentNumber != 0) {
+            nextNumber += Int(pow(Double(currentNumber % 10), Double(exponent)))
+            currentNumber = (currentNumber - currentNumber % 10) / 10
+        }
+        if alreadyAppearedNumber.contains(nextNumber) {
+            notLoopYet = false
+            count = sequence.firstIndex(of: nextNumber)!
+        }
+        alreadyAppearedNumber.insert(nextNumber)
+        sequence.append(nextNumber)
+        currentNumber = nextNumber
+        nextNumber = 0
+    }
+    print(count)
 }
 
-func next(A: Int, P: Int) -> Int {
-  return String(A)
-    .compactMap { power(base: Int(String($0))!, exponent: P) }
-    .reduce(0, +)
-}
+repeatingSequence()
 
-func length(A: Int, P: Int, seq: Int, visited: inout [Int]) -> Int {
-  if visited[A] != 0 {
-    return visited[A] - 1
-  }
-  visited[A] = seq
-  let nx = next(A: A, P: P)
-  return length(A: nx, P: P, seq: seq + 1, visited: &visited)
-}
-
-var visited = [Int](repeating: 0, count: 1_000_000)
-let input = readLine()!.split(separator: " ").map { Int($0)! }
-let A = input[0]
-let P = input[1]
-print(length(A: A, P: P, seq: 1, visited: &visited))
+/*
+ Sample Input 1
+57 2
+ Sample Output 1
+4
+ */
